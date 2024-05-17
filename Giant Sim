@@ -1,0 +1,137 @@
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+speed = 500
+
+local player = game.Players.LocalPlayer
+
+function toTarget(pos, targetPos, targetCFrame)
+    local tween_s = game:service "TweenService"
+    local info = TweenInfo.new((targetPos - pos).Magnitude / speed, Enum.EasingStyle.Linear)
+    local tween, err =
+        pcall(
+        function()
+            local tween =
+                tween_s:Create(
+                game:GetService("Players").LocalPlayer.Character["HumanoidRootPart"],
+                info,
+                {CFrame = targetCFrame}
+            )
+            tween:Play()
+        end
+    )
+    if not tween then
+        return err
+    end
+end
+
+local X =
+    Material.Load(
+    {
+        Title = "Giant Simulator--Made By Nerd.",
+        Style = 2,
+        SizeX = 500,
+        SizeY = 350,
+        Theme = "Light",
+        ColorOverrides = {
+            MainFrame = Color3.fromRGB(170, 50, 89)
+        }
+    }
+)
+
+local Y =
+    X.New(
+    {
+        Title = "Auto Stuff"
+    }
+)
+Y.Toggle(
+    {
+        Text = "AutoFarm",
+        Callback = function(Value)
+            AutoFarm = Value
+        end,
+        Enabled = false
+    }
+)
+Y.Slider(
+    {
+        Text = "Speed Auto Farm:",
+        Callback = function(Value)
+            speed = Value
+        end,
+        Min = 500,
+        Max = 2000,
+        Def = 500
+    }
+)
+game:GetService("RunService").Stepped:connect(
+    function()
+        if AutoFarm == true or AutoKill == true then
+            pcall(
+                function()
+                    game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+                end
+            )
+        end
+    end
+)
+Y.Toggle(
+    {
+        Text = "AutoAttack",
+        Callback = function(Value)
+            AutoAttack = Value
+        end,
+        Enabled = false
+    }
+)
+Y.Toggle(
+    {
+        Text = "AutoKill",
+        Callback = function(Value)
+            AutoKill = Value
+        end,
+        Enabled = false
+    }
+)
+Y.Dropdown({
+	Text = "Select Kill",
+	Callback = function(Value)
+		targetkillnew = Value
+	end,
+	Options = {
+    "DemonKing","Borock","Gnome"
+}
+})
+spawn(
+    function()
+        while wait() do
+if AutoKill then
+for i,v in pairs(game:GetService("Workspace").NPC:GetDescendants()) do
+if v.Name == targetkillnew then
+for i,v1 in pairs(v:GetDescendants()) do
+if v1.Name == "HumanoidRootPart" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v1.Position + Vector3.new(0,0,0))
+      game:GetService("ReplicatedStorage").Aero.AeroRemoteServices.GameService.WeaponAttackStart:FireServer()
+                game:GetService("ReplicatedStorage").Aero.AeroRemoteServices.GameService.WeaponAnimComplete:FireServer()
+end
+end
+end
+end            
+end
+if AutoAttack == true then
+                game:GetService("ReplicatedStorage").Aero.AeroRemoteServices.GameService.WeaponAttackStart:FireServer()
+                game:GetService("ReplicatedStorage").Aero.AeroRemoteServices.GameService.WeaponAnimComplete:FireServer()
+            end
+            if AutoFarm then
+                for i, v in pairs(game.workspace:GetDescendants()) do
+                    if v.Name == "Prefab" and v.ClassName == "MeshPart" then
+                        toTarget(
+                            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position,
+                            v.Position,
+                            CFrame.new(v.Position + Vector3.new(0, 0, 0))
+                        )
+                    end
+                end
+            end
+        end
+    end
+)
